@@ -3,77 +3,214 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CMMC Level 1 Practices — TANO CMMC Playbook</title>
+  <title>CMMC Level 1 Practices — TANO Research</title>
   <link rel="stylesheet" href="../../styles.css" />
+
+  <style>
+    /* Ensure the main card does NOT block internal scroll */
+    .card {
+      overflow: visible !important;
+    }
+
+    /* Scrollable table container */
+    .table-wrapper {
+      max-height: 600px !important;
+      min-height: 300px !important;
+      overflow-y: auto !important;
+      overflow-x: auto !important;
+      display: block !important;
+      border: 1px solid #333;
+      background: #111;
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      vertical-align: top;
+    }
+
+    /* Sticky header */
+    th {
+      background: #333;
+      font-weight: bold;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    tr:nth-child(even) {
+      background: #252525;
+    }
+
+    /* Search bar */
+    .search-box {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+    }
+
+    .loading {
+      margin-top: 15px;
+      font-style: italic;
+      color: #aaa;
+    }
+  </style>
 </head>
+
 <body>
+
   <div class="card">
     <h1>CMMC Level 1 Practices</h1>
     <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
     <p>
-      This page summarizes the core CMMC Level 1 (Foundational) practices in
-      plain language, from a small-business / lab environment perspective.
+      This table is generated directly from <code>L1_Practices.csv</code>, mapped to
+      CMMC Level 1 (Foundational) practices.
     </p>
-  </div>
 
-  <div class="card">
-    <h2>Access Control (AC)</h2>
+    <input
+      type="text"
+      id="searchInput"
+      class="search-box"
+      onkeyup="filterTable()"
+      placeholder="Search… (e.g., AC.L1, 3.1.1, firewall, backups)"
+    />
 
-    <h3>AC.L1-3.1.1 – Authorized Access</h3>
-    <p><strong>Plain language:</strong> Only people who are supposed to use a system should have an account.</p>
-    <p><strong>What this looks like:</strong> unique user accounts, no shared logins, disabled old/stale accounts.</p>
-    <p><strong>Example evidence:</strong> user list export, account provisioning procedure, HR offboarding checklist.</p>
+    <div id="status" class="loading">Loading Level 1 practices…</div>
 
-    <h3>AC.L1-3.1.2 – Limit System Access</h3>
-    <p><strong>Plain language:</strong> Give people only the minimum access they need for their job.</p>
-    <p><strong>What this looks like:</strong> role-based access groups (e.g., “Finance”, “IT Admin”, “Student Worker”).</p>
-    <p><strong>Example evidence:</strong> group membership report, access request forms, approval workflow notes.</p>
-
-    <h3>AC.L1-3.1.20 – External Connections</h3>
-    <p><strong>Plain language:</strong> Control and approve external connections like VPN, Wi-Fi, and cloud apps.</p>
-    <p><strong>Example evidence:</strong> VPN configuration, Wi-Fi PSK/MFA policy, list of approved SaaS apps.</p>
-  </div>
-
-  <div class="card">
-    <h2>Identification &amp; Authentication (IA)</h2>
-
-    <h3>IA.L1-3.5.1 – Identify &amp; Authenticate Users</h3>
-    <p><strong>Plain language:</strong> Users must log in with an ID and password (no anonymous access).</p>
-    <p><strong>Example evidence:</strong> login screenshots, local/domain policy settings, password policy document.</p>
-
-    <h3>IA.L1-3.5.2 – Use Multifactor Authentication</h3>
-    <p><strong>Plain language:</strong> Important and remote access accounts must use MFA (password + extra factor).</p>
-    <p><strong>Example evidence:</strong> MFA configuration screenshot, VPN/SSO settings, MFA enrollment report.</p>
-  </div>
-
-  <div class="card">
-    <h2>System &amp; Information Integrity (SI), Media (MP), Physical (PE), Secure Communications (SC)</h2>
-
-    <h3>SI.L1-3.14.1 – Patch &amp; Update Systems</h3>
-    <p><strong>Plain language:</strong> Keep operating systems and software updated.</p>
-    <p><strong>Example evidence:</strong> patch schedule, update screenshots, WSUS/Intune/SCCM reports.</p>
-
-    <h3>MP.L1-3.8.3 – Media Sanitization</h3>
-    <p><strong>Plain language:</strong> Wipe or destroy drives, USBs, and devices before reuse or disposal.</p>
-
-    <h3>PE.L1-3.10.1 – Physical Access Control</h3>
-    <p><strong>Plain language:</strong> Control who can physically access servers, network gear, and workstations.</p>
-
-    <h3>SC.L1-3.13.1 – Boundary Protection</h3>
-    <p><strong>Plain language:</strong> Use a firewall and avoid unnecessary open inbound ports.</p>
-  </div>
-
-  <div class="card">
-    <p>
-      This page is a summary. More detailed tracking is maintained in the
-      <a href="L1_Practices.csv">Level 1 Practices CSV</a> for scoring and implementation status.
-    </p>
+    <!-- Scrollable Table Wrapper -->
+    <div class="table-wrapper">
+      <table id="l1Table">
+        <thead>
+          <tr>
+            <th>Practice ID</th>
+            <th>Domain</th>
+            <th>NIST Ref</th>
+            <th>Practice Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="l1Body">
+          <!-- Rows will be injected here via JS -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
     <p><a href="../../cmmc.html">&larr; Back to TANO + CMMC Playbook</a></p>
   </div>
 
-  <footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
+  <footer>© TANO Research — Exploring Possibilities Everywhere</footer>
+
+  <script>
+    /* CSV parser supporting quotes + commas */
+    function parseCSV(text) {
+      const rows = [];
+      const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+      for (let line of lines) {
+        const cells = [];
+        let current = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            cells.push(current);
+            current = "";
+          } else {
+            current += char;
+          }
+        }
+        cells.push(current);
+        rows.push(cells);
+      }
+      return rows;
+    }
+
+    /* Build the table HTML */
+    function buildTable(rows) {
+      const status = document.getElementById("status");
+      const tbody = document.getElementById("l1Body");
+
+      if (rows.length <= 1) {
+        status.textContent = "No Level 1 practices found.";
+        return;
+      }
+
+      const header = rows[0];
+      const idxPracticeId  = header.indexOf("Practice_ID");
+      const idxDomain      = header.indexOf("Domain");
+      const idxNistRef     = header.indexOf("NIST_Ref");
+      const idxName        = header.indexOf("Practice_Name");
+      const idxDescription = header.indexOf("Practice_Description");
+
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[idxPracticeId]) continue;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r[idxPracticeId] || ""}</td>
+          <td>${r[idxDomain] || ""}</td>
+          <td>${r[idxNistRef] || ""}</td>
+          <td>${r[idxName] || ""}</td>
+          <td>${r[idxDescription] || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      status.style.display = "none";
+    }
+
+    /* Search filter */
+    function filterTable() {
+      const filter = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#l1Body tr");
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+      });
+    }
+
+    /* Load CSV file */
+    fetch("L1_Practices.csv")
+      .then(resp => {
+        if (!resp.ok) throw new Error("Unable to load L1_Practices.csv");
+        return resp.text();
+      })
+      .then(text => {
+        const rows = parseCSV(text);
+        buildTable(rows);
+      })
+      .catch(err => {
+        document.getElementById("status").textContent =
+          "Error loading file: " + err.message;
+      });
+  </script>
+
 </body>
 </html>
