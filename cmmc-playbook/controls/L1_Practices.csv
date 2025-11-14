@@ -1,10 +1,19 @@
-ID,Domain,Practice_ID,Title,Plain_Language_Description,Example_Evidence,Implemented,Notes
-1,AC,AC.L1-3.1.1,Authorized Access,"Only authorized people should have accounts on systems that handle CUI.","User account export, HR offboarding checklist, access request forms",No,"Plan to review all local/domain accounts and disable unused ones."
-2,AC,AC.L1-3.1.2,Limit System Access,"Give users only the minimum access needed for their job.","Group membership report, role-based access table",No,"Need to define and document roles: Finance, IT Admin, Student Worker, etc."
-3,AC,AC.L1-3.1.20,External Connections,"Control and approve VPN, Wi-Fi, and cloud services that connect to internal systems.","VPN config, Wi-Fi PSK policy, list of approved SaaS apps",Yes,"VPN with MFA implemented; document approved SaaS list."
-4,IA,IA.L1-3.5.1,Identification & Authentication,"Require users to log in with a unique ID and password, no anonymous access.","Login screenshots, authentication settings",Yes,"Local admin accounts locked down; still reviewing legacy shared logins."
-5,IA,IA.L1-3.5.2,Multifactor Authentication,"Use MFA for admin and remote access accounts.","MFA config screenshot, SSO/VPN settings",In Progress,"Rolling out MFA to all staff; some service accounts still under review."
-6,SI,SI.L1-3.14.1,System Patching,"Keep OS and software updated with vendor patches.","Patch reports, update schedules, WSUS/Intune logs",No,"Need to define patch cadence and centralize update tracking."
-7,MP,MP.L1-3.8.3,Media Sanitization,"Wipe or destroy media before reuse or disposal.","Sanitization procedure, destruction certificates",No,"Process exists informally; needs written procedure."
-8,PE,PE.L1-3.10.1,Physical Access Control,"Restrict who can physically reach systems and network closets.","Door access logs, camera placement, key list",Yes,"Server closet is locked; documenting visitor log process."
-9,SC,SC.L1-3.13.1,Boundary Protection,"Use a firewall and minimize open inbound ports.","Firewall ruleset export, network diagram",Yes,"Firewall in place; next step is regular rule review schedule."
+Practice_ID,Domain,NIST_Ref,Practice_Name,Practice_Description,Assessment_Objectives_Summary,Type
+AC.L1-3.1.1,Access Control,3.1.1,Limit system access,"Limit access to authorized users, processes, and devices.",Identify authorized users/devices; enforce access rules,Level 1
+AC.L1-3.1.2,Access Control,3.1.2,Limit system access to actions,"Ensure authorized users can only perform permitted transactions and functions.",Define allowed actions by role; enforce via permissions,Level 1
+AC.L1-3.1.20,Access Control,3.1.20,External connections,"Verify and control/limit connections to and use of external information systems.",Inventory external systems; approve & monitor connections,Level 1
+AC.L1-3.1.22,Access Control,3.1.22,Public access systems,"Control public-facing systems and separate them from internal networks.",Separate public/internal zones; restrict admin access,Level 1
+IA.L1-3.5.1,Identification & Authentication,3.5.1,Identify users, processes, devices,"Uniquely identify system users, processes acting on behalf of users, and devices.",Ensure unique IDs for users/processes/devices,Level 1
+IA.L1-3.5.2,Identification & Authentication,3.5.2,Authenticate identities,"Authenticate or verify identities before granting access.",Enforce logon/auth; verify identity before access,Level 1
+MP.L1-3.8.3,Media Protection,3.8.3,Sanitize/dispose media,"Sanitize or destroy system media before disposal or reuse.",Use wiping/shredding; document media destruction,Level 1
+PE.L1-3.10.1,Physical Protection,3.10.1,Limit physical access,"Limit physical access to systems and environments to authorized individuals.",Use locks, badges, visitor control,Level 1
+PE.L1-3.10.3,Physical Protection,3.10.3,Escort visitors,"Escort visitors and monitor visitor activity.",Visitor logs; escorts; badges/stickers,Level 1
+PE.L1-3.10.4,Physical Protection,3.10.4,Physical access logs,"Maintain audit logs of physical access.",Maintain/retain door & visitor logs,Level 1
+PE.L1-3.10.5,Physical Protection,3.10.5,Access devices,"Control and manage physical access devices (keys, cards, etc.).",Track, issue, revoke keys/badges,Level 1
+SC.L1-3.13.1,System & Communications Protection,3.13.1,Boundary protection,"Monitor, control, and protect communications at external boundaries and key internal boundaries.",Use firewalls/segmentation; monitor traffic,Level 1
+SC.L1-3.13.5,System & Communications Protection,3.13.5,Public system separation,"Implement subnetworks for publicly accessible systems separated from internal networks.",DMZ or isolated segment for public services,Level 1
+SI.L1-3.14.1,System & Information Integrity,3.14.1,Flaw remediation,"Identify, report, and correct system flaws in a timely manner.",Track vulnerabilities/patches; timely updates,Level 1
+SI.L1-3.14.2,System & Information Integrity,3.14.2,Malicious code protection,"Provide protection from malicious code at appropriate locations.",Deploy AV/EDR; monitor alerts,Level 1
+SI.L1-3.14.4,System & Information Integrity,3.14.4,Update AV/EDR,"Update malicious code protection mechanisms when new releases are available.",Enable automatic updates; verify,Level 1
+SI.L1-3.14.5,System & Information Integrity,3.14.5,System & file scanning,"Perform periodic and real-time scans of files from external sources.",Schedule scans; scan downloads/removable media,Level 1
+

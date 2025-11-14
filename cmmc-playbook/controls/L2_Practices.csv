@@ -1,6 +1,1 @@
-ID,Domain,Practice_ID,Title,Plain_Language_Description,Example_Evidence,Implementation_Phase,Notes
-1,AC,AC.2.007,Least Privilege,"Users get only the access they need and admin access is tightly controlled.","RBAC matrix, privileged access policy, Just-In-Time (JIT) access logs",Planning,"Need to finalize roles and admin groups."
-2,AC,AC.2.013,Session Lock,"Systems automatically lock after a period of inactivity.","GPO/MDM policy settings, screenshots of lock behavior",Not Started,"Decide standard timeout (e.g., 10–15 minutes)."
-3,AU,AU.2.041,Audit Logging,"Enable logging for key security events on systems that process CUI.","Log configuration, SIEM settings, sample log exports",In Progress,"Core systems logging enabled; need to onboard more endpoints."
-4,AU,AU.2.042,Log Review & Analysis,"Regularly review logs or use tools to detect suspicious activity.","Log review schedule, SIEM dashboards, alert rules",Planning,"Decide review cadence and assign ownership."
-5,CM,CM.2.061,Configuration Management,"Define and control baseline configurations for systems.","Baseline configuration docs, change control records",Not Started,"Baseline images and change process not formally documented yet."
+Practice_ID,Domain,NIST_Ref,Practice_Name,Practice_Description,Assessment_Objectives_Summary,Type
