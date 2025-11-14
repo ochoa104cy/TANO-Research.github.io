@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CMMC Level 2 Practices — TANO CMMC Playbook</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>CMMC Level 2 Practices (Draft Structure)</h1>
+    <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
+    <p>
+      Level 2 aligns with the 110 controls from NIST SP 800-171. This page provides a 
+      structured, human-readable way to organize those practices for future expansion.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Example: Access Control (AC)</h2>
+    <p>
+      Level 2 introduces more detailed access control expectations, including session handling,
+      account management, and enforcement of least privilege.
+    </p>
+
+    <h3>AC.1.001 / AC.L1-3.1.1 – Authorized Access</h3>
+    <p>Baseline from Level 1: only authorized users, processes, and devices can access systems.</p>
+
+    <h3>AC.2.007 – Least Privilege</h3>
+    <p>
+      Ensure that users are granted the minimum access needed for their role, and that elevated
+      access is time-bound and monitored.
+    </p>
+
+    <h3>AC.2.013 – Session Lock</h3>
+    <p>
+      Configure session timeouts and automatic screen locks on endpoints that process CUI.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Example: Audit &amp; Accountability (AU)</h2>
+
+    <h3>AU.2.041 – Audit Logging</h3>
+    <p>
+      Enable logging for key systems (e.g., authentication, VPN, privileged actions) and retain logs
+      long enough to support investigations.
+    </p>
+
+    <h3>AU.2.042 – Review &amp; Analyze Logs</h3>
+    <p>
+      Perform periodic log reviews or use automated tools/SIEM to detect suspicious behavior.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Planned Structure</h2>
+    <p>
+      The full Level 2 implementation will be tracked in the
+      <a href="L2_Practices.csv">Level 2 Practices CSV</a>, including:
+    </p>
+    <ul>
+      <li>Practice ID (NIST 800-171 / CMMC mapping)</li>
+      <li>Domain (AC, AU, CM, IA, IR, MP, PE, RA, SC, SI, etc.)</li>
+      <li>Plain-language description</li>
+      <li>Planned / existing controls</li>
+      <li>Evidence references</li>
+      <li>Implementation and assessment status</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <p><a href="../../cmmc.html">&larr; Back to TANO + CMMC Playbook</a></p>
+  </div>
+
+  <footer>© TANO Research — Exploring Possibilities Everywhere</footer>
+</body>
+</html>

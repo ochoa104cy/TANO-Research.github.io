@@ -1,0 +1,10 @@
+ID,Domain,Practice_ID,Title,Plain_Language_Description,Example_Evidence,Implemented,Notes
+1,AC,AC.L1-3.1.1,Authorized Access,"Only authorized people should have accounts on systems that handle CUI.","User account export, HR offboarding checklist, access request forms",No,"Plan to review all local/domain accounts and disable unused ones."
+2,AC,AC.L1-3.1.2,Limit System Access,"Give users only the minimum access needed for their job.","Group membership report, role-based access table",No,"Need to define and document roles: Finance, IT Admin, Student Worker, etc."
+3,AC,AC.L1-3.1.20,External Connections,"Control and approve VPN, Wi-Fi, and cloud services that connect to internal systems.","VPN config, Wi-Fi PSK policy, list of approved SaaS apps",Yes,"VPN with MFA implemented; document approved SaaS list."
+4,IA,IA.L1-3.5.1,Identification & Authentication,"Require users to log in with a unique ID and password, no anonymous access.","Login screenshots, authentication settings",Yes,"Local admin accounts locked down; still reviewing legacy shared logins."
+5,IA,IA.L1-3.5.2,Multifactor Authentication,"Use MFA for admin and remote access accounts.","MFA config screenshot, SSO/VPN settings",In Progress,"Rolling out MFA to all staff; some service accounts still under review."
+6,SI,SI.L1-3.14.1,System Patching,"Keep OS and software updated with vendor patches.","Patch reports, update schedules, WSUS/Intune logs",No,"Need to define patch cadence and centralize update tracking."
+7,MP,MP.L1-3.8.3,Media Sanitization,"Wipe or destroy media before reuse or disposal.","Sanitization procedure, destruction certificates",No,"Process exists informally; needs written procedure."
+8,PE,PE.L1-3.10.1,Physical Access Control,"Restrict who can physically reach systems and network closets.","Door access logs, camera placement, key list",Yes,"Server closet is locked; documenting visitor log process."
+9,SC,SC.L1-3.13.1,Boundary Protection,"Use a firewall and minimize open inbound ports.","Firewall ruleset export, network diagram",Yes,"Firewall in place; next step is regular rule review schedule."
