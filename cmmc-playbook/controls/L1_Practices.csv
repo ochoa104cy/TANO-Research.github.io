@@ -1,18 +1,16 @@
-Practice_ID,Domain,NIST_Ref,Practice_Name,Practice_Description
-AC.L1-3.1.1,Access Control,3.1.1,Authorized Access,Limit information system access to authorized users and devices.
-AC.L1-3.1.2,Access Control,3.1.2,Authorized Use,Limit system access to the types of transactions and functions authorized.
-AC.L1-3.1.20,Access Control,3.1.20,External Connections,Verify and control/limit connections to external systems.
-AC.L1-3.1.22,Access Control,3.1.22,Public Information Control,Control public information posted or accessible online.
-IA.L1-3.5.1,Identification & Authentication,3.5.1,User Identification,Identify users before enabling access.
-IA.L1-3.5.2,Identification & Authentication,3.5.2,Authenticator Management,Use secure methods to authenticate users.
-MP.L1-3.8.3,Media Protection,3.8.3,Media Sanitization,Sanitize or destroy information system media before disposal/reuse.
-PE.L1-3.10.1,Physical Protection,3.10.1,Physical Access Limits,Limit physical access to systems and equipment.
-PE.L1-3.10.3,Physical Protection,3.10.3,Escort & Monitor Visitors,Escort visitors and monitor visitor activity.
-PE.L1-3.10.4,Physical Protection,3.10.4,Access Logs,Maintain audit logs of physical access.
-PE.L1-3.10.5,Physical Protection,3.10.5,Managing Physical Access Devices,Control and manage physical keys, cards, and devices.
-SC.L1-3.13.1,System & Communications Protection,3.13.1,Boundary Protection,Monitor and control communications at system boundaries.
-SC.L1-3.13.5,System & Communications Protection,3.13.5,Public System Protection,Implement protections for publicly accessible systems.
-SI.L1-3.14.1,System & Information Integrity,3.14.1,Flaw Remediation,Identify, report, and correct system flaws.
-SI.L1-3.14.2,System & Information Integrity,3.14.2,Malicious Code Protection,Protect systems from malware.
-SI.L1-3.14.4,System & Information Integrity,3.14.4,Update Malicious Code Protection,Update antivirus and malware defenses regularly.
-SI.L1-3.14.5,System & Information Integrity,3.14.5,Spam & Message Protection,Protect against spam and unauthorized messages.
+Practice ID,Domain,Practice Name,Description,Source
+AC.L1-3.1.1,Access Control,Authorized Access,Limit system access to authorized users, FAR 52.204-21
+AC.L1-3.1.2,Access Control,Authorized Functions,Limit system access to the types of transactions and functions that authorized users are permitted to execute, FAR 52.204-21
+AC.L1-3.1.20,Access Control,External Connections,Verify and control/limit connections to external systems, FAR 52.204-21
+AC.L1-3.1.22,Access Control,Public Information Control,Control information posted or processed on publicly accessible systems, FAR 52.204-21
+IA.L1-3.5.1,Identification & Authentication,User Identification,Identify information system users, FAR 52.204-21
+IA.L1-3.5.2,Identification & Authentication,Authentication,Authenticate information system users, FAR 52.204-21
+MP.L1-3.8.3,Media Protection,Media Disposal,Sanitize or destroy information system media before disposal or release for reuse, FAR 52.204-21
+PE.L1-3.10.1,Physical Protection,Facility Access Control,Limit physical access to organizational information systems, equipment, and their respective operating environments, FAR 52.204-21
+PE.L1-3.10.3,Physical Protection,Escort Visitors,Escort visitors and monitor visitor activity, FAR 52.204-21
+PE.L1-3.10.4,Physical Protection,Physical Access Logs,Maintain audit logs of physical access, FAR 52.204-21
+PE.L1-3.10.5,Physical Protection,Physical Device Locking,Control and manage physical access devices, FAR 52.204-21
+SC.L1-3.13.1,System & Communications Protection,Boundary Protection,Monitor, control, and protect communications at system boundaries, FAR 52.204-21
+SC.L1-3.13.5,System & Communications Protection,Public Systems,Implement subnetworks for publicly accessible system components, FAR 52.204-21
+SI.L1-3.14.1,System & Information Integrity,Flaw Remediation,Identify, report, and correct information system flaws, FAR 52.204-21
+SI.L1-3.14.2,System & Information Integrity,Malicious Code Protection,Provide protection from malicious code at appropriate locations, FAR 52.204-21
