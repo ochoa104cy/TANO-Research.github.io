@@ -7,213 +7,121 @@
   <link rel="stylesheet" href="../../styles.css" />
 
   <style>
-    /* Ensure the main card does NOT block internal scroll */
-    .card {
-      overflow: visible !important;
-    }
-
-    /* Scrollable table container */
+    .card { overflow: visible !important; }
     .table-wrapper {
-      max-height: 600px !important;
-      min-height: 300px !important;
-      overflow-y: auto !important;
-      overflow-x: auto !important;
-      display: block !important;
-      border: 1px solid #333;
+      max-height: 600px;
+      overflow-y: auto;
+      overflow-x: auto;
       background: #111;
+      border: 1px solid #333;
       border-radius: 6px;
       margin-top: 20px;
     }
-
-    /* Table styling */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #1e1e1e;
-      color: #fff;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #333;
-      vertical-align: top;
-    }
-
-    /* Sticky header */
-    th {
-      background: #333;
-      font-weight: bold;
-      text-align: left;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    tr:nth-child(even) {
-      background: #252525;
-    }
-
-    /* Search bar */
+    table { width: 100%; border-collapse: collapse; background: #1e1e1e; color: #fff; }
+    th, td { padding: 10px; border: 1px solid #333; }
+    th { background: #333; position: sticky; top: 0; }
+    tr:nth-child(even) { background:#252525; }
     .search-box {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #111;
-      color: #fff;
-    }
-
-    .loading {
-      margin-top: 15px;
-      font-style: italic;
-      color: #aaa;
+      width: 100%; padding:10px; margin-top:10px;
+      background:#111; border:1px solid #444; color:white;
+      border-radius:6px;
     }
   </style>
 </head>
-<div style="margin: 1rem 0;">
-  <a href="../Overview.html" class="btn-primary">← Return to Playbook Overview</a>
-  &nbsp; | &nbsp;
-  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
-  &nbsp; | &nbsp;
-  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
-</div>
 
 <body>
 
-  <div class="card">
-    <h1>CMMC Level 1 Practices</h1>
-    <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
-    <p>
-      This table is generated directly from <code>L1_Practices.csv</code>, mapped to
-      CMMC Level 1 (Foundational) practices.
-    </p>
+<div style="margin: 1rem 0;">
+  <a href="../Overview.html" class="btn-primary">← Return to Playbook Overview</a> |
+  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a> |
+  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
+</div>
 
-    <input
-      type="text"
-      id="searchInput"
-      class="search-box"
-      onkeyup="filterTable()"
-      placeholder="Search… (e.g., AC.L1, 3.1.1, firewall, backups)"
-    />
+<div class="card">
+  <h1>CMMC Level 1 Practices</h1>
+  <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
+  <p>This table loads directly from <code>L1_Practices.csv</code>.</p>
 
-    <div id="status" class="loading">Loading Level 1 practices…</div>
+  <input id="searchInput" class="search-box" onkeyup="filterTable()" placeholder="Search… (e.g., AC.L1, firewall)">
+  <div id="status">Loading Level 1 practices…</div>
 
-    <!-- Scrollable Table Wrapper -->
-    <div class="table-wrapper">
-      <table id="l1Table">
-        <thead>
-          <tr>
-            <th>Practice ID</th>
-            <th>Domain</th>
-            <th>NIST Ref</th>
-            <th>Practice Name</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody id="l1Body">
-          <!-- Rows will be injected here via JS -->
-        </tbody>
-      </table>
-    </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Practice ID</th>
+          <th>Domain</th>
+          <th>NIST Ref</th>
+          <th>Practice Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="l1Body"></tbody>
+    </table>
   </div>
+</div>
 
-  <footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
+<footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
 
-  <script>
-    /* CSV parser supporting quotes + commas */
-    function parseCSV(text) {
-      const rows = [];
-      const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
-      for (let line of lines) {
-        const cells = [];
-        let current = "";
-        let inQuotes = false;
+<script>
+const CSV_URL =
+  "https://ochoa104cy.github.io/TANO-Research.github.io/cmmc-playbook/controls/L1_Practices.csv";
 
-        for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          if (char === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-              current += '"';
-              i++;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (char === ',' && !inQuotes) {
-            cells.push(current);
-            current = "";
-          } else {
-            current += char;
-          }
-        }
-        cells.push(current);
-        rows.push(cells);
-      }
-      return rows;
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(x => x.trim() !== "");
+  return lines.map(line => {
+    let cells = [], cur = "", quote = false;
+    for (let c of line) {
+      if (c === '"') quote = !quote;
+      else if (c === "," && !quote) { cells.push(cur); cur = ""; }
+      else cur += c;
     }
+    cells.push(cur);
+    return cells;
+  });
+}
 
-    /* Build the table HTML */
-    function buildTable(rows) {
-      const status = document.getElementById("status");
-      const tbody = document.getElementById("l1Body");
+function buildTable(rows) {
+  const tbody = document.getElementById("l1Body");
+  const header = rows[0];
 
-      if (rows.length <= 1) {
-        status.textContent = "No Level 1 practices found.";
-        return;
-      }
+  const id = header.indexOf("Practice_ID");
+  const dom = header.indexOf("Domain");
+  const ref = header.indexOf("NIST_Ref");
+  const name = header.indexOf("Practice_Name");
+  const desc = header.indexOf("Practice_Description");
 
-      const header = rows[0];
-      const idxPracticeId  = header.indexOf("Practice_ID");
-      const idxDomain      = header.indexOf("Domain");
-      const idxNistRef     = header.indexOf("NIST_Ref");
-      const idxName        = header.indexOf("Practice_Name");
-      const idxDescription = header.indexOf("Practice_Description");
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[id]) continue;
 
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        if (!r[idxPracticeId]) continue;
+    tbody.innerHTML += `
+      <tr>
+        <td>${r[id]}</td>
+        <td>${r[dom]}</td>
+        <td>${r[ref]}</td>
+        <td>${r[name]}</td>
+        <td>${r[desc]}</td>
+      </tr>`;
+  }
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${r[idxPracticeId] || ""}</td>
-          <td>${r[idxDomain] || ""}</td>
-          <td>${r[idxNistRef] || ""}</td>
-          <td>${r[idxName] || ""}</td>
-          <td>${r[idxDescription] || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      }
+  document.getElementById("status").style.display = "none";
+}
 
-      status.style.display = "none";
-    }
+function filterTable() {
+  const filter = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll("#l1Body tr").forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 
-    /* Search filter */
-    function filterTable() {
-      const filter = document.getElementById("searchInput").value.toLowerCase();
-      const rows = document.querySelectorAll("#l1Body tr");
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(filter) ? "" : "none";
-      });
-    }
-
-    /* Load CSV file */
-    fetch("https://ochoa104cy.github.io/cmmc-playbook/controls/L1_Practices.csv")
-      .then(resp => {
-        if (!resp.ok) throw new Error("Unable to load L1_Practices.csv");
-        return resp.text();
-      })
-      .then(text => {
-        const rows = parseCSV(text);
-        buildTable(rows);
-      })
-      .catch(err => {
-        document.getElementById("status").textContent =
-          "Error loading file: " + err.message;
-      });
-  </script>
+fetch(CSV_URL)
+  .then(r => { if (!r.ok) throw new Error("CSV not found"); return r.text(); })
+  .then(text => buildTable(parseCSV(text)))
+  .catch(err => {
+    document.getElementById("status").textContent = "Error: " + err.message;
+  });
+</script>
 
 </body>
 </html>
