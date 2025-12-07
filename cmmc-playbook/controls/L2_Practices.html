@@ -1,44 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CMMC Level 2 Practices — TANO Research</title>
-  <link rel="stylesheet" href="../../styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CMMC Level 2 Practices — TANO Research</title>
+<link rel="stylesheet" href="../../styles.css" />
 
-  <style>
-    .card { overflow: visible !important; }
-    .table-wrapper {
-      max-height: 600px; overflow-y: auto; overflow-x: auto;
-      background: #111; border: 1px solid #333; border-radius: 6px;
-      margin-top: 20px;
-    }
-    table { width: 100%; border-collapse: collapse; color: white; }
-    th, td { border: 1px solid #333; padding: 10px; }
-    th { background:#333; position: sticky; top:0; }
-    tr:nth-child(even) { background:#252525; }
-    .search-box {
-      width: 100%; padding:10px; background:#111;
-      border:1px solid #444; color:white; margin-top:10px;
-    }
-  </style>
+<style>
+  .card { overflow: visible!important; }
+  .table-wrapper {
+    max-height: 600px; overflow-y: auto; overflow-x: auto;
+    background: #111; border: 1px solid #333; border-radius: 6px;
+    margin-top: 20px;
+  }
+  table { width: 100%; border-collapse: collapse; background: #1e1e1e; color: white; }
+  th, td { padding: 10px; border: 1px solid #333; }
+  th { background: #333; position: sticky; top: 0; }
+  tr:nth-child(even) { background:#252525; }
+  .search-box {
+    width: 100%; padding:10px; margin-top:10px;
+    background:#111; border:1px solid #444; color:white;
+  }
+</style>
 </head>
 
 <body>
 
-<div style="margin:1rem 0;">
-  <a href="../Overview.html" class="btn-primary">← Return to Playbook Overview</a> |
-  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a> |
-  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
+<div style="margin: 1rem 0;">
+  <a href="../Overview.html" class="btn-primary">← Playbook Overview</a> |
+  <a href="../../cmmc.html" class="btn-primary">← CMMC Center</a> |
+  <a href="../../index.html" class="btn-primary">← Home</a>
 </div>
 
 <div class="card">
   <h1>CMMC Level 2 Practices</h1>
   <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
-  <p>This table loads directly from <code>L2_Practices.csv</code>.</p>
 
-  <input id="searchInput" class="search-box" onkeyup="filterTable()" placeholder="Search… (e.g., 3.1.1, MFA, encryption)">
-
+  <input id="searchInput" class="search-box" onkeyup="filterTable()" placeholder="Search (e.g., AC.L2, MFA, encryption)">
   <div id="status">Loading Level 2 practices…</div>
 
   <div class="table-wrapper">
@@ -57,11 +55,11 @@
   </div>
 </div>
 
-<footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
+<footer>© TANO Research</footer>
 
 <script>
 const CSV_URL =
-  "https://ochoaeg.github.io/TANO-RESEARCH.GITHUB.IO/cmmc-playbook/controls/L2_Practices.csv";
+  "https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L2_Practices.csv";
 
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(x => x.trim() !== "");
@@ -80,7 +78,6 @@ function parseCSV(text) {
 function buildTable(rows) {
   const tbody = document.getElementById("l2Body");
   const header = rows[0];
-
   const id = header.indexOf("Practice_ID");
   const dom = header.indexOf("Domain");
   const ref = header.indexOf("NIST_Ref");
@@ -90,6 +87,7 @@ function buildTable(rows) {
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
     if (!r[id]) continue;
+
     tbody.innerHTML += `
       <tr>
         <td>${r[id]}</td>
@@ -104,18 +102,18 @@ function buildTable(rows) {
 }
 
 function filterTable() {
-  const f = document.getElementById("searchInput").value.toLowerCase();
+  const filter = document.getElementById("searchInput").value.toLowerCase();
   document.querySelectorAll("#l2Body tr").forEach(tr => {
-    tr.style.display = tr.textContent.toLowerCase().includes(f) ? "" : "none";
+    tr.style.display = tr.textContent.toLowerCase().includes(filter) ? "" : "none";
   });
 }
 
 fetch(CSV_URL)
   .then(r => { if (!r.ok) throw new Error("CSV not found"); return r.text(); })
   .then(text => buildTable(parseCSV(text)))
-  .catch(err => {
-    document.getElementById("status").textContent = "Error: " + err.message;
-  });
+  .catch(err =>
+    document.getElementById("status").textContent = "Error: " + err.message
+  );
 </script>
 
 </body>
