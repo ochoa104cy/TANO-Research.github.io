@@ -1,46 +1,100 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CMMC Level 2 Practices — TANO Research</title>
-<link rel="stylesheet" href="../../styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CMMC Level 2 Practices — TANO Research</title>
 
-<style>
-  .card { overflow: visible!important; }
-  .table-wrapper {
-    max-height: 600px; overflow-y: auto; overflow-x: auto;
-    background: #111; border: 1px solid #333; border-radius: 6px;
-    margin-top: 20px;
-  }
-  table { width: 100%; border-collapse: collapse; background: #1e1e1e; color: white; }
-  th, td { padding: 10px; border: 1px solid #333; }
-  th { background: #333; position: sticky; top: 0; }
-  tr:nth-child(even) { background:#252525; }
-  .search-box {
-    width: 100%; padding:10px; margin-top:10px;
-    background:#111; border:1px solid #444; color:white;
-  }
-</style>
+  <link rel="stylesheet" href="../../styles.css" />
+
+  <style>
+    .card { overflow: visible !important; }
+
+    .table-wrapper {
+      max-height: 600px;
+      min-height: 300px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: #111;
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      vertical-align: top;
+    }
+
+    th {
+      background: #333;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    tr:nth-child(even) {
+      background: #252525;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .nav-row {
+      margin: 1rem 0;
+    }
+
+    .loading {
+      margin-top: 15px;
+      color: #aaa;
+      font-style: italic;
+    }
+  </style>
 </head>
 
 <body>
 
-<div style="margin: 1rem 0;">
-  <a href="../Overview.html" class="btn-primary">← Playbook Overview</a> |
-  <a href="../../cmmc.html" class="btn-primary">← CMMC Center</a> |
-  <a href="../../index.html" class="btn-primary">← Home</a>
+<!-- Navigation -->
+<div class="nav-row">
+  <a href="../Overview.html" class="btn-primary">← Back to Playbook Overview</a>
+  &nbsp; | &nbsp;
+  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  &nbsp; | &nbsp;
+  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
 </div>
 
 <div class="card">
   <h1>CMMC Level 2 Practices</h1>
-  <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
 
-  <input id="searchInput" class="search-box" onkeyup="filterTable()" placeholder="Search (e.g., AC.L2, MFA, encryption)">
-  <div id="status">Loading Level 2 practices…</div>
+  <p><b>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</b></p>
 
+  <p>This interactive table loads directly from <code>L2_Practices.csv</code>, mapped to NIST SP 800-171 Rev.3 requirements.</p>
+
+  <!-- Search box -->
+  <input id="searchInput" class="search-box" placeholder="Search (e.g., AC.L2, MFA, encryption)" onkeyup="filterTable()">
+
+  <div id="status" class="loading">Loading Level 2 practices…</div>
+
+  <!-- Data table -->
   <div class="table-wrapper">
-    <table>
+    <table id="l2Table">
       <thead>
         <tr>
           <th>Practice ID</th>
@@ -55,65 +109,98 @@
   </div>
 </div>
 
-<footer>© TANO Research</footer>
+<footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
 
 <script>
-const CSV_URL =
-  "https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L2_Practices.csv";
-
+/* CSV parser supporting quoted + comma fields */
 function parseCSV(text) {
-  const lines = text.split(/\r?\n/).filter(x => x.trim() !== "");
-  return lines.map(line => {
-    let cells = [], cur = "", quote = false;
-    for (let c of line) {
-      if (c === '"') quote = !quote;
-      else if (c === "," && !quote) { cells.push(cur); cur = ""; }
-      else cur += c;
+  const rows = [];
+  const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+
+  for (const line of lines) {
+    let cells = [];
+    let cur = "";
+    let q = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+
+      if (c === '"') {
+        q = !q;
+        continue;
+      }
+
+      if (c === ',' && !q) {
+        cells.push(cur);
+        cur = "";
+        continue;
+      }
+
+      cur += c;
     }
+
     cells.push(cur);
-    return cells;
-  });
+    rows.push(cells);
+  }
+
+  return rows;
 }
 
 function buildTable(rows) {
+  const status = document.getElementById("status");
   const tbody = document.getElementById("l2Body");
+
+  if (rows.length <= 1) {
+    status.textContent = "CSV file empty or missing data.";
+    return;
+  }
+
   const header = rows[0];
-  const id = header.indexOf("Practice_ID");
-  const dom = header.indexOf("Domain");
-  const ref = header.indexOf("NIST_Ref");
-  const name = header.indexOf("Practice_Name");
-  const desc = header.indexOf("Practice_Description");
+
+  const idxId   = header.indexOf("Practice_ID");
+  const idxDom  = header.indexOf("Domain");
+  const idxRef  = header.indexOf("NIST_Ref");
+  const idxName = header.indexOf("Practice_Name");
+  const idxDesc = header.indexOf("Practice_Description");
 
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    if (!r[id]) continue;
+    if (!r[idxId]) continue;
 
-    tbody.innerHTML += `
-      <tr>
-        <td>${r[id]}</td>
-        <td>${r[dom]}</td>
-        <td>${r[ref]}</td>
-        <td>${r[name]}</td>
-        <td>${r[desc]}</td>
-      </tr>`;
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${r[idxId]}</td>
+      <td>${r[idxDom]}</td>
+      <td>${r[idxRef]}</td>
+      <td>${r[idxName]}</td>
+      <td>${r[idxDesc]}</td>
+    `;
+
+    tbody.appendChild(tr);
   }
 
-  document.getElementById("status").style.display = "none";
+  status.style.display = "none";
 }
 
+/* Search filter */
 function filterTable() {
-  const filter = document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll("#l2Body tr").forEach(tr => {
-    tr.style.display = tr.textContent.toLowerCase().includes(filter) ? "" : "none";
+  const f = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#l2Body tr");
+
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(f) ? "" : "none";
   });
 }
 
-fetch(CSV_URL)
-  .then(r => { if (!r.ok) throw new Error("CSV not found"); return r.text(); })
+/* Load CSV — FINAL CORRECT URL */
+fetch("https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L2_Practices.csv")
+  .then(resp => resp.text())
   .then(text => buildTable(parseCSV(text)))
-  .catch(err =>
-    document.getElementById("status").textContent = "Error: " + err.message
-  );
+  .catch(err => {
+    document.getElementById("status").textContent =
+      "Error loading L2_Practices.csv — " + err;
+  });
 </script>
 
 </body>

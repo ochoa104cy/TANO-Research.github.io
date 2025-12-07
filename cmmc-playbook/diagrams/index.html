@@ -1,27 +1,83 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <title>CMMC Diagrams — TANO Research</title>
-  <link rel="stylesheet" href="../../styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CMMC Compliance Diagrams — TANO Research</title>
+  <link rel="stylesheet" href="../../styles.css" />
+
+  <style>
+    .diagram-list {
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .diagram-list li {
+      margin: 10px 0;
+      padding: 12px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+
+    .diagram-list a {
+      color: #66ccff;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    .diagram-list a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .nav-row {
+      margin: 1rem 0;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>CMMC Compliance Diagrams</h1>
-<p>Select any diagram below:</p>
+<!-- NAVIGATION (same as every other page) -->
+<div class="nav-row">
+  <a href="../Overview.html" class="btn-primary">← Back to Playbook Overview</a>
+  &nbsp; | &nbsp;
+  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  &nbsp; | &nbsp;
+  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
+</div>
 
-<ul>
-  <li><a href="CMMC Assessment Requirements.png">CMMC Assessment Requirements</a></li>
-  <li><a href="CMMC Ecosystem.png">CMMC Ecosystem</a></li>
-  <li><a href="CMMC Level 2 Requirements.png">Level 2 Requirements</a></li>
-  <li><a href="CMMC Model.png">CMMC Model</a></li>
-  <li><a href="CMMC Scoping - Assessment Boundary.png">Assessment Boundary</a></li>
-  <li><a href="CUI Data Flow.png">CUI Data Flow</a></li>
-  <li><a href="CUI Determination Flowchart.png">CUI Determination</a></li>
-  <li><a href="Distribution of CMMC Practices per Level across Domains.png">Practice Distribution</a></li>
-  <li><a href="Guidelines for Protecting FCI and CUI.png">Protecting FCI/CUI</a></li>
-</ul>
+<div class="content-card">
+  <h1>CMMC Compliance Diagrams</h1>
+  <p>
+    These diagrams visualize key components of CMMC compliance, including scoping,
+    boundaries, data flow, assessment requirements, and ecosystem relationships.
+  </p>
 
-<a href="../../cmmc.html">← Return to CMMC Center</a>
+  <ul class="diagram-list">
+    <li><a href="CMMC Assessment Requirements.png" target="_blank">CMMC Assessment Requirements</a></li>
+    <li><a href="CMMC Ecosystem.png" target="_blank">The CMMC Ecosystem</a></li>
+    <li><a href="CMMC Level 2 Requirements.png" target="_blank">CMMC Level 2 Requirements</a></li>
+    <li><a href="CMMC Model.png" target="_blank">CMMC Model Structure</a></li>
+    <li><a href="CMMC Scoping - Assessment Boundary.png" target="_blank">Scoping & Assessment Boundary</a></li>
+    <li><a href="CUI Data Flow.png" target="_blank">CUI Data Flow Diagram</a></li>
+    <li><a href="CUI Determination Flowchart.png" target="_blank">CUI Determination Flowchart</a></li>
+    <li><a href="Distribution of CMMC Practices per Level across Domains.png" target="_blank">
+      Distribution of CMMC Practices Across Domains</a></li>
+    <li><a href="Guidelines for Protecting FCI and CUI.png" target="_blank">
+      Guidelines for Protecting FCI & CUI</a></li>
+    <li><a href="The CMMC Model Taxonomy.png" target="_blank">CMMC Model Taxonomy</a></li>
+    <li><a href="The Four Phases of the Assessment Process.png" target="_blank">
+      The Four Phases of the Assessment Process</a></li>
+  </ul>
+</div>
+
+<footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
+
 </body>
 </html>
