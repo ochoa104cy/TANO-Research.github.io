@@ -1,26 +1,247 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TANO CMMC Level 2 – System Security Plan</title>
-  <link rel="stylesheet" href="../dashboard/styles-dashboard.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>System Security Plan (SSP) Template — TANO CMMC Playbook</title>
+  <link rel="stylesheet" href="../../styles.css" />
   <style>
-    body { font-family: system-ui, sans-serif; margin: 2rem; }
-    h1, h2, h3 { color: #f97316; }
-    .practice { margin-bottom: 3rem; border-top: 1px solid #444; padding-top: 1.5rem; }
-    table { border-collapse: collapse; width: 100%; margin-top: 0.5rem; }
-    th, td { border: 1px solid #555; padding: 0.4rem; font-size: 0.9rem; }
-    th { background: #111827; color: #e5e7eb; }
+    .ssp-section h2 {
+      margin-top: 1.5rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.25rem;
+    }
+    .ssp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 14px;
+    }
+    .ssp-table th,
+    .ssp-table td {
+      padding: 8px;
+      border: 1px solid #333;
+      vertical-align: top;
+    }
+    .ssp-table th {
+      background: #222;
+      text-align: left;
+    }
+    .hint {
+      font-size: 13px;
+      color: #aaa;
+      font-style: italic;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #222;
+      border: 1px solid #444;
+      margin-right: 6px;
+    }
   </style>
 </head>
+<div style="margin: 1rem 0;">
+  <a href="../Overview.html" class="btn-primary">← Return to Playbook Overview</a>
+  &nbsp; | &nbsp;
+  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  &nbsp; | &nbsp;
+  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
+</div>
+
 <body>
-  <h1>TANO Research – CMMC Level 2<br>System Security Plan (SSP)</h1>
-  <p><strong>Generated:</strong> {{GENERATED_DATE}}</p>
+  <div class="card">
+    <h1>System Security Plan (SSP) Template</h1>
+    <p><strong>TANO = Trust • Accuracy • Neutrality • Organization • Transparency</strong></p>
+    <p class="hint">
+      This is a TANO-styled SSP template aligned with NIST SP 800-171 Rev. 3 and CMMC Levels 1–2.
+      Replace the bracketed placeholders with organization-specific details.
+    </p>
+  </div>
 
-  <p>This SSP describes how TANO Research implements and maintains the
-  requirements of CMMC Level 2 based on NIST SP 800-171 Rev.2.</p>
+  <div class="card ssp-section">
+    <h2>1. System Identification</h2>
+    <table class="ssp-table">
+      <tr><th>Organization Name</th><td>[Organization Name]</td></tr>
+      <tr><th>System Name</th><td>[System / Application Name]</td></tr>
+      <tr><th>System Acronym</th><td>[Acronym]</td></tr>
+      <tr><th>System Owner</th><td>[Name, Title, Department, Email, Phone]</td></tr>
+      <tr><th>Authorizing Official</th><td>[Name, Title, Role]</td></tr>
+      <tr><th>Responsible Security Officer</th><td>[ISO / ISSO Name, Contact]</td></tr>
+      <tr><th>Environment</th><td>[On-premises / Cloud / Hybrid]</td></tr>
+      <tr><th>System Category</th><td>[CUI / FCI / Internal Use]</td></tr>
+    </table>
+  </div>
 
-  {{PRACTICE_BLOCKS}}
+  <div class="card ssp-section">
+    <h2>2. System Description & Boundary</h2>
+    <p class="hint">
+      Describe what the system does, who uses it, and where CUI/FCI flows. Keep it high-level but clear enough for an assessor.
+    </p>
+    <table class="ssp-table">
+      <tr>
+        <th>System Purpose</th>
+        <td>[Brief description of what this system does and why it exists.]</td>
+      </tr>
+      <tr>
+        <th>Users & Roles</th>
+        <td>[User types: admin, standard users, contractors, external partners, etc.]</td>
+      </tr>
+      <tr>
+        <th>System Boundary</th>
+        <td>[Describe what is in scope for CMMC (servers, workstations, cloud services, network segments).]</td>
+      </tr>
+      <tr>
+        <th>CUI/FCI Locations</th>
+        <td>[Where CUI/FCI is stored, processed, and transmitted (e.g., file server, M365 tenant, specific app DB).]</td>
+      </tr>
+      <tr>
+        <th>External Connections</th>
+        <td>[VPNs, SaaS integrations, third-party services, remote access paths, etc.]</td>
+      </tr>
+    </table>
+  </div>
 
+  <div class="card ssp-section">
+    <h2>3. CUI / FCI Data Types</h2>
+    <p class="hint">
+      List the categories of CUI/FCI handled by this system and any applicable contracts or DFARS clauses.
+    </p>
+    <table class="ssp-table">
+      <tr>
+        <th>Data Type</th>
+        <th>Description</th>
+        <th>Source / Contract</th>
+      </tr>
+      <tr>
+        <td>[CUI Category]</td>
+        <td>[Description of data (e.g., engineering drawings, test results, contract deliverables).]</td>
+        <td>[DFARS clause, contract number, or program reference.]</td>
+      </tr>
+      <tr>
+        <td>[FCI]</td>
+        <td>[Basic federal contract information, schedules, pricing, performance data.]</td>
+        <td>[Contract / Task Order]</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card ssp-section">
+    <h2>4. System Architecture & Components</h2>
+    <p class="hint">
+      Summarize the key components. You can link to diagrams stored in <code>cmmc-playbook/diagrams/</code>.
+    </p>
+    <table class="ssp-table">
+      <tr>
+        <th>Component</th>
+        <th>Type</th>
+        <th>Role</th>
+        <th>In Scope for CUI?</th>
+      </tr>
+      <tr>
+        <td>[Server-01]</td>
+        <td>Virtual Server</td>
+        <td>[File server / application host]</td>
+        <td>[Yes / No]</td>
+      </tr>
+      <tr>
+        <td>[Workstations]</td>
+        <td>Endpoints</td>
+        <td>[User workstations used to access CUI.]</td>
+        <td>[Yes]</td>
+      </tr>
+      <tr>
+        <td>[Cloud Service Name]</td>
+        <td>SaaS / IaaS</td>
+        <td>[Email, collaboration, storage, etc.]</td>
+        <td>[Yes / No]</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card ssp-section">
+    <h2>5. Roles & Responsibilities</h2>
+    <table class="ssp-table">
+      <tr>
+        <th>Role</th>
+        <th>Responsibility</th>
+        <th>Assigned To</th>
+      </tr>
+      <tr>
+        <td>System Owner</td>
+        <td>Overall accountability for system security and compliance.</td>
+        <td>[Name]</td>
+      </tr>
+      <tr>
+        <td>Information Security Officer</td>
+        <td>Implements controls, monitors risk, and manages SSP and POA&amp;M.</td>
+        <td>[Name]</td>
+      </tr>
+      <tr>
+        <td>IT / System Administrator</td>
+        <td>Implements technical controls, patching, backup, and monitoring.</td>
+        <td>[Name]</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>Follow policies, training, and report incidents.</td>
+        <td>[Groups / Departments]</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card ssp-section">
+    <h2>6. Control Implementation Summary (by Domain)</h2>
+    <p class="hint">
+      Use this summary to point to how each CMMC / NIST 800-171 Rev. 3 domain is implemented.
+      You can cross-reference your Level 1 and Level 2 practice tables.
+    </p>
+    <table class="ssp-table">
+      <tr>
+        <th>Domain</th>
+        <th>Summary of Implementation</th>
+        <th>Key Artifacts / Evidence</th>
+      </tr>
+      <tr>
+        <td>Access Control (AC)</td>
+        <td>[Short summary: MFA, least privilege, VPN, boundary controls, etc.]</td>
+        <td>[Access control policy, AD group design, VPN config, firewall rules]</td>
+      </tr>
+      <tr>
+        <td>Identification &amp; Authentication (IA)</td>
+        <td>[Summary: unique IDs, MFA, password rules, etc.]</td>
+        <td>[Password policy, MFA config, SSO docs]</td>
+      </tr>
+      <tr>
+        <td>Audit &amp; Accountability (AU)</td>
+        <td>[Summary: log collection, SIEM, alerting, retention.]</td>
+        <td>[SIEM config, log retention settings, monitoring procedures]</td>
+      </tr>
+      <!-- Add more rows for all domains as needed -->
+    </table>
+  </div>
+
+  <div class="card ssp-section">
+    <h2>7. Risk, POA&amp;M, and Continuous Improvement</h2>
+    <p class="hint">
+      Link this SSP to your risk register and POA&amp;M so assessors can see how you track and close gaps.
+    </p>
+    <p>
+      <span class="tag">Risk Register</span>
+      See: <code>cmmc-playbook/templates/Risk_Register.html</code>
+    </p>
+    <p>
+      <span class="tag">POA&amp;M</span>
+      See: <code>cmmc-playbook/templates/POAM_Template.html</code>
+    </p>
+    <p>
+      <span class="tag">Evidence</span>
+      See: <code>cmmc-playbook/evidence/</code> (screenshots, configs, exports).
+    </p>
+  </div>
+
+  <footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
 </body>
 </html>

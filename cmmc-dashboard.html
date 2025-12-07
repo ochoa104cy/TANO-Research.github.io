@@ -1,52 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TANO CMMC Level 2 Dashboard</title>
-  <link rel="stylesheet" href="styles-dashboard.css">
+  <meta charset="UTF-8" />
+  <title>TANO Research – CMMC Practices Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Dashboard-specific stylesheet -->
+  <link rel="stylesheet" href="styles-dashboard.css" />
+
+  <!-- Global site theme -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <header>
-    <h1>TANO CMMC Level 2 – Assessment Dashboard</h1>
+
+  <header class="tano-header">
+    <h1>TANO Research</h1>
+    <p class="subtitle">CMMC Level 1 &amp; Level 2 Practices Explorer &amp; Assessment</p>
   </header>
 
-  <main>
-    <section class="summary-cards">
-      <div class="card">
-        <h2>Total Practices (L2)</h2>
-        <p id="total-practices">0</p>
+  <!-- Return to CMMC Center -->
+  <div style="text-align:center; margin-top: 1rem;">
+    <a href="cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  </div>
+
+  <main class="dashboard-container">
+
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-block">
+        <label>Level</label>
+        <div class="chip-group" id="levelChips">
+          <button class="chip chip-active" data-level="all">All</button>
+          <button class="chip" data-level="L1">Level 1</button>
+          <button class="chip" data-level="L2">Level 2</button>
+        </div>
       </div>
-      <div class="card">
-        <h2>Implemented</h2>
-        <p id="implemented-practices">0</p>
+
+      <div class="filter-block">
+        <label>Domain</label>
+        <select id="domainFilter">
+          <option value="all">All Domains</option>
+        </select>
       </div>
-      <div class="card">
-        <h2>Partially Implemented</h2>
-        <p id="partial-practices">0</p>
+
+      <div class="filter-block">
+        <label>Search</label>
+        <input id="searchInput" type="search" placeholder="Search practices…" />
       </div>
-      <div class="card">
-        <h2>Not Implemented</h2>
-        <p id="not-practices">0</p>
+
+      <div class="filter-block button-block">
+        <button id="exportCsvBtn" class="btn-secondary">Export Assessment CSV</button>
       </div>
     </section>
 
-    <section>
-      <h2>Progress by Domain</h2>
-      <table id="domain-table">
-        <thead>
-          <tr>
-            <th>Domain</th>
-            <th>Total</th>
-            <th>Implemented</th>
-            <th>Partial</th>
-            <th>Not Implemented</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <!-- Stats / Assessment Summary -->
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Practices</div>
+        <div class="stat-value" id="totalCount">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Level 1</div>
+        <div class="stat-value" id="level1Count">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Level 2</div>
+        <div class="stat-value" id="level2Count">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Domains</div>
+        <div class="stat-value" id="domainCount">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Applicable (In Scope)</div>
+        <div class="stat-value" id="applicableCount">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Implemented</div>
+        <div class="stat-value" id="implementedCount">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Readiness %</div>
+        <div class="stat-value" id="readinessPercent">–</div>
+      </div>
     </section>
+
+    <!-- Layout -->
+    <section class="layout">
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table id="practicesTable">
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th>Practice ID</th>
+              <th>Domain</th>
+              <th>Practice Name</th>
+              <th>Description</th>
+              <th>Source</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state" hidden>
+          No practices match your filters.
+        </div>
+      </div>
+
+      <!-- Detail + Assessment Panel -->
+      <aside class="detail-panel">
+        <h3 id="detailId">Select a practice</h3>
+
+        <p><strong>Level:</strong> <span id="detailLevel">–</span></p>
+        <p><strong>Domain:</strong> <span id="detailDomain">–</span></p>
+        <p><strong>Name:</strong> <span id="detailName">–</span></p>
+        <p><strong>Description:</strong> <span id="detailDescription">–</span></p>
+        <p><strong>Source:</strong> <span id="detailSource">–</span></p>
+
+        <hr />
+
+        <div class="assessment-controls">
+          <h4>Assessment for this Practice</h4>
+
+          <label class="assessment-label" for="scopeSelect">Scope</label>
+          <select id="scopeSelect">
+            <option value="in">In Scope</option>
+            <option value="out">Out of Scope</option>
+          </select>
+
+          <label class="assessment-label" for="statusSelect">Status</label>
+          <select id="statusSelect">
+            <option value="unknown">Not Set</option>
+            <option value="implemented">Implemented</option>
+            <option value="partial">Partially Implemented</option>
+            <option value="not">Not Implemented</option>
+            <option value="na">Not Applicable</option>
+          </select>
+
+          <label class="assessment-label" for="notesInput">Notes / Evidence</label>
+          <textarea id="notesInput" rows="4" placeholder="Describe evidence, gaps, systems, and responsible parties…"></textarea>
+
+          <div class="assessment-buttons">
+            <button id="saveAssessmentBtn" class="btn-primary small">Save Assessment</button>
+            <button id="clearAssessmentBtn" class="btn-secondary small" type="button">Clear</button>
+          </div>
+
+          <p class="hint">
+            Assessment data is stored only in this browser (localStorage). Use "Export Assessment CSV"
+            to capture results for your SSP / POA&M.
+          </p>
+        </div>
+
+        <div class="detail-footer">
+          <p class="hint">Use this panel during walkthroughs with a small organization to set scope, status, and evidence per practice.</p>
+        </div>
+      </aside>
+
+    </section>
+
   </main>
 
+  <footer class="tano-footer">
+    <p>TANO – Trust • Accuracy • Neutrality • Organization • Transparency</p>
+  </footer>
+
+  <!-- Dashboard JS -->
   <script src="cmmc-dashboard.js"></script>
+
 </body>
 </html>
