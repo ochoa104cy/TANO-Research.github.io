@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CMMC Level 2 Assessment — TANO Research</title>
+  <link rel="stylesheet" href="../styles.css" />
+
+  <style>
+    .table-wrapper {
+      max-height: 600px !important;
+      overflow-y: auto;
+      overflow-x: auto;
+      margin-top: 20px;
+      border: 1px solid #333;
+      background: #111;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #222;
+      z-index: 5;
+    }
+    .search-box {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+    }
+    select, textarea {
+      width: 100%;
+      background: #111;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 6px;
+      padding: 5px;
+    }
+    textarea {
+      height: 70px;
+      resize: vertical;
+    }
+  </style>
+</head>
+
+<body>
+
+<div style="margin:1rem 0;">
+  <a href="index.html" class="btn-primary">← Assessment Home</a>
+  |
+  <a href="../cmmc.html" class="btn-primary">← CMMC Center</a>
+  |
+  <a href="../index.html" class="btn-primary">← TANO Home</a>
+</div>
+
+<div class="card">
+  <h1>CMMC Level 2 Assessment</h1>
+  <p><strong>Assess all 110 NIST SP 800-171 Rev.3 practices.</strong></p>
+
+  <input id="searchInput" class="search-box" placeholder="Search Level 2 practices…"/>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Practice ID</th>
+          <th>Domain</th>
+          <th>Practice Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
+
+<script>
+const CSV_URL = "https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L2_Practices.csv";
+let assessment = JSON.parse(localStorage.getItem("tano_L2_assessment") || "{}");
+
+function save() {
+  localStorage.setItem("tano_L2_assessment", JSON.stringify(assessment));
+}
+
+function parseCSV(text) {
+  return text.split(/\r?\n/).filter(x => x.trim() !== "").map(row => {
+    const parts = row.split(",");
+    return parts.map(p => p.replace(/^"|"$/g, ""));
+  });
+}
+
+function buildTable(rows) {
+  const header = rows[0];
+  const idx = {
+    id: header.indexOf("Practice ID"),
+    domain: header.indexOf("Domain"),
+    name: header.indexOf("Practice Name"),
+    desc: header.indexOf("Description")
+  };
+  
+  const body = document.getElementById("tableBody");
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    let pid = r[idx.id];
+    if (!pid) continue;
+
+    if (!assessment[pid]) {
+      assessment[pid] = { status: "", notes: "" };
+    }
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${pid}</td>
+      <td>${r[idx.domain]}</td>
+      <td>${r[idx.name]}</td>
+      <td>${r[idx.desc]}</td>
+      <td>
+        <select onchange="updateStatus('${pid}', this.value)">
+          <option value="">—</option>
+          <option value="Implemented" ${assessment[pid].status === "Implemented" ? "selected" : ""}>Implemented</option>
+          <option value="Not Implemented" ${assessment[pid].status === "Not Implemented" ? "selected" : ""}>Not Implemented</option>
+          <option value="N/A" ${assessment[pid].status === "N/A" ? "selected" : ""}>N/A</option>
+        </select>
+      </td>
+      <td>
+        <textarea oninput="updateNotes('${pid}', this.value)">${assessment[pid].notes || ""}</textarea>
+      </td>
+    `;
+
+    body.appendChild(tr);
+  }
+
+  save();
+}
+
+function updateStatus(id, value) {
+  assessment[id].status = value;
+  save();
+}
+
+function updateNotes(id, value) {
+  assessment[id].notes = value;
+  save();
+}
+
+function searchFilter() {
+  let q = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll("#tableBody tr").forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+  });
+}
+
+document.getElementById("searchInput").addEventListener("keyup", searchFilter);
+
+fetch(CSV_URL)
+  .then(r => r.text())
+  .then(t => buildTable(parseCSV(t)));
+</script>
+
+</body>
+</html>
