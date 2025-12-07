@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Diagram Viewer — TANO Research</title>
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { text-align: center; padding: 20px; }
+  img {
+    max-width: 95%;
+    max-height: 85vh;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #111;
+    padding: 10px;
+  }
+  .nav-row { margin-bottom: 20px; }
+  .viewer-nav {
+    margin-top: 20px;
+  }
+  .viewer-btn {
+    padding: 8px 16px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin: 0 10px;
+    color: #66ccff;
+    text-decoration: none;
+  }
+  .viewer-btn:hover {
+    background: #333;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- TOP NAVIGATION -->
+<div class="nav-row">
+  <a href="../../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  &nbsp; | &nbsp;
+  <a href="../../index.html" class="btn-primary">← Back to TANO Home</a>
+</div>
+
+<h2 id="cmmcplaybookTitle">CMMC Playbook Viewer</h2>
+
+<img id="cmmcplaybookImage" src="" alt="CMMC Playbook Loading…">
+
+<div class="viewer-nav">
+  <a id="prevBtn" class="viewer-btn" href="#">⟵ Previous</a>
+  <a id="nextBtn" class="viewer-btn" href="#">Next ⟶</a>
+</div>
+
+<script>
+  // Diagram manifest — MUST match your filenames
+  const diagrams = [
+    "Phase 1.png",
+    "Phase 2.png",
+    "Phase 3.png",
+    "Phase 4.png"
+  ];
+
+  const url = new URL(window.location.href);
+  const file = url.searchParams.get("file");
+
+  const img = document.getElementById("cmmcplaybookImage");
+  const title = document.getElementById("cmmcplaybookTitle");
+
+  if (file) {
+    img.src = file;
+    title.textContent = file.replace(".png", "");
+  }
+
+  const index = diagrams.indexOf(file);
+
+  document.getElementById("prevBtn").href =
+    index > 0 ? `view.html?file=${diagrams[index - 1]}` : "#";
+
+  document.getElementById("nextBtn").href =
+    index < diagrams.length - 1 ? `view.html?file=${diagrams[index + 1]}` : "#";
+
+  // Close viewer with ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") window.location.href = "index.html";
+  });
+</script>
+
+</body>
+</html>
