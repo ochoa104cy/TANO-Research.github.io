@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CMMC Assessment Dashboard — TANO Research</title>
   <link rel="stylesheet" href="../styles.css" />
 
-  <!-- Chart.js for interactive graphs -->
+  <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -109,21 +109,21 @@
 </head>
 <body>
 
-<!-- Top navigation (keeps your existing style) -->
+<!-- Top navigation, matching your existing style -->
 <div style="margin:1rem 0;">
-  <a href="index.html" class="btn-primary">← Back to Assessment Home</a>
+  <a href="index.html" class="btn-primary">← Assessment Home</a>
   &nbsp;|&nbsp;
-  <a href="../cmmc.html" class="btn-primary">← Return to CMMC Center</a>
+  <a href="../cmmc.html" class="btn-primary">← CMMC Center</a>
   &nbsp;|&nbsp;
-  <a href="../index.html" class="btn-primary">← Back to TANO Home</a>
+  <a href="../index.html" class="btn-primary">← TANO Home</a>
 </div>
 
 <div class="card">
   <h1>CMMC Assessment Dashboard</h1>
   <p>
-    This dashboard summarizes your current CMMC Level 1 and Level 2 assessment progress.
-    All data is read from your local assessment state (<code>tano_cmmc_L1</code> and
-    <code>tano_cmmc_L2</code>) in this browser.
+    This dashboard summarizes your current CMMC Level 1 and Level 2 assessment
+    progress. Data comes from your browser’s local storage
+    (<code>tano_L1_assessment</code> and <code>tano_L2_assessment</code>).
   </p>
 
   <!-- View filter -->
@@ -149,15 +149,15 @@
   <h2>Visual Overview</h2>
   <div class="chart-grid">
     <div class="chart-container">
-      <h3>Completion Breakdown</h3>
+      <h3>Completion Breakdown (Current View)</h3>
       <canvas id="completionDonut"></canvas>
     </div>
     <div class="chart-container">
-      <h3>Level Comparison (Implemented)</h3>
+      <h3>Implemented Controls by Level</h3>
       <canvas id="levelBar"></canvas>
     </div>
     <div class="chart-container">
-      <h3>Domain Maturity (Radar)</h3>
+      <h3>Domain Maturity (Current View)</h3>
       <canvas id="domainRadar"></canvas>
     </div>
   </div>
@@ -165,11 +165,13 @@
   <!-- Incomplete controls -->
   <h2 style="margin-top:1.75rem;">Incomplete Controls</h2>
   <p style="font-size:0.9rem;">
-    This table lists all in-scope controls that are either
-    <strong>Not Implemented</strong> or <strong>not yet assessed</strong>.
+    Listed below are all controls in the current view that are
+    <strong>Not Implemented</strong> or <strong>Not Yet Assessed</strong>.
   </p>
 
-  <button class="btn-primary" onclick="downloadIncompleteCSV()">Download Incomplete Controls CSV</button>
+  <button class="btn-primary" onclick="downloadIncompleteCSV()">
+    Download Incomplete Controls CSV
+  </button>
 
   <div class="table-wrapper">
     <table id="incompleteTable">
@@ -180,7 +182,7 @@
           <th>Domain</th>
           <th>Practice Name</th>
           <th>Status</th>
-          <th>Notes / Evidence</th>
+          <th>Notes</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -191,36 +193,76 @@
 <footer>© TANO Research — Exploring Possibilities with Integrity Everywhere</footer>
 
 <script>
-/* ---------- Helpers to load assessment state ---------- */
+const L1_CSV = "https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L1_Practices.csv";
+const L2_CSV = "https://ochoa104cy.github.io/TANO-Research/cmmc-playbook/controls/L2_Practices.csv";
 
-function loadState(key) {
+let allRecords = [];   // all L1+L2 controls + assessment
+let completionChart, levelChart, radarChart;
+
+function loadLocalState(key) {
   const raw = localStorage.getItem(key);
   if (!raw) return {};
   try { return JSON.parse(raw); } catch (e) { return {}; }
 }
 
-function flattenRecords() {
-  const l1 = loadState("tano_cmmc_L1");
-  const l2 = loadState("tano_cmmc_L2");
+function parseCSV(text) {
+  return text
+    .split(/\r?\n/)
+    .filter(line => line.trim() !== "")
+    .map(line => {
+      const parts = [];
+      let cur = "";
+      let inQuotes = false;
+      for (let i=0; i<line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (ch === ',' && !inQuotes) {
+          parts.push(cur);
+          cur = "";
+        } else {
+          cur += ch;
+        }
+      }
+      parts.push(cur);
+      return parts.map(p => p.replace(/^"|"$/g, ""));
+    });
+}
+
+function buildRecords(l1Rows, l2Rows) {
+  const l1State = loadLocalState("tano_L1_assessment");
+  const l2State = loadLocalState("tano_L2_assessment");
   const records = [];
 
-  Object.keys(l1).forEach(id => {
-    const r = l1[id];
-    records.push({
-      ...r,
-      level: "L1"
-    });
-  });
+  function process(rows, level, state) {
+    const header = rows[0];
+    const idx = {
+      id: header.indexOf("Practice ID"),
+      domain: header.indexOf("Domain"),
+      name: header.indexOf("Practice Name"),
+      desc: header.indexOf("Description")
+    };
+    for (let i=1; i<rows.length; i++) {
+      const r = rows[i];
+      const id = r[idx.id];
+      if (!id) continue;
+      const st = state[id] || { status: "", notes: "" };
+      records.push({
+        level,
+        id,
+        domain: r[idx.domain] || "",
+        name: r[idx.name] || "",
+        desc: r[idx.desc] || "",
+        status: st.status || "",
+        notes: st.notes || ""
+      });
+    }
+  }
 
-  Object.keys(l2).forEach(id => {
-    const r = l2[id];
-    records.push({
-      ...r,
-      level: "L2"
-    });
-  });
-
-  return records;
+  process(l1Rows, "L1", l1State);
+  process(l2Rows, "L2", l2State);
+  allRecords = records;
 }
 
 function filterByViewMode(records, mode) {
@@ -229,67 +271,55 @@ function filterByViewMode(records, mode) {
   return records;
 }
 
-/* ---------- Stats + domain calculations ---------- */
-
 function computeStats(records) {
-  let total = 0, implemented = 0, notImpl = 0, na = 0;
+  let total = records.length;
+  let impl = 0, notImpl = 0, na = 0, none = 0;
   records.forEach(r => {
-    if (r.inScope === false) return;
-    total++;
-    if (r.status === "implemented") implemented++;
-    else if (r.status === "not_implemented") notImpl++;
-    else if (r.status === "na") na++;
+    if (r.status === "Implemented") impl++;
+    else if (r.status === "Not Implemented") notImpl++;
+    else if (r.status === "N/A") na++;
+    else none++;
   });
-  const pct = total > 0 ? Math.round((implemented / total) * 100) : 0;
-  return { total, implemented, notImpl, na, pct };
+  const pct = total > 0 ? Math.round((impl / total) * 100) : 0;
+  return { total, impl, notImpl, na, none, pct };
 }
 
 function computeDomainMaturity(records) {
-  const byDomain = {};
+  const map = {};
   records.forEach(r => {
-    if (r.inScope === false) return;
     const d = r.domain || "Unspecified";
-    if (!byDomain[d]) byDomain[d] = { total: 0, implemented: 0 };
-    byDomain[d].total++;
-    if (r.status === "implemented") byDomain[d].implemented++;
+    if (!map[d]) map[d] = { total: 0, impl: 0 };
+    map[d].total++;
+    if (r.status === "Implemented") map[d].impl++;
   });
-
-  const domains = Object.keys(byDomain).sort();
-  const maturity = domains.map(d => {
-    const x = byDomain[d];
-    return x.total > 0 ? Math.round((x.implemented / x.total) * 100) : 0;
+  const domains = Object.keys(map).sort();
+  const values = domains.map(d => {
+    const x = map[d];
+    return x.total > 0 ? Math.round((x.impl / x.total) * 100) : 0;
   });
-
-  return { domains, maturity };
+  return { domains, values };
 }
 
-/* ---------- Rendering stat cards ---------- */
-
-function renderOverallStats(allRecords, viewRecords) {
+function renderOverallStats(viewRecords) {
   const overallEl = document.getElementById("overallStats");
-
   const allStats = computeStats(allRecords);
   const viewStats = computeStats(viewRecords);
 
   overallEl.innerHTML = `
     <div class="stat-card">
-      <div class="stat-label">All Levels — In-Scope Controls</div>
+      <div class="stat-label">All Levels — Total Controls</div>
       <div class="stat-value">${allStats.total}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">All Levels — Implemented</div>
-      <div class="stat-value">${allStats.implemented}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">All Levels — Not Implemented</div>
-      <div class="stat-value">${allStats.notImpl}</div>
+      <div class="stat-value">${allStats.impl}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">All Levels — Completion %</div>
       <div class="stat-value">${allStats.pct}%</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Current View — In-Scope Controls</div>
+      <div class="stat-label">Current View — Controls</div>
       <div class="stat-value">${viewStats.total}</div>
     </div>
     <div class="stat-card">
@@ -299,22 +329,21 @@ function renderOverallStats(allRecords, viewRecords) {
   `;
 }
 
-function renderLevelStats(records) {
+function renderLevelStats() {
   const levelsEl = document.getElementById("levelsStats");
-  const l1 = records.filter(r => r.level === "L1");
-  const l2 = records.filter(r => r.level === "L2");
-
+  const l1 = allRecords.filter(r => r.level === "L1");
+  const l2 = allRecords.filter(r => r.level === "L2");
   const s1 = computeStats(l1);
   const s2 = computeStats(l2);
 
   levelsEl.innerHTML = `
     <div class="stat-card">
-      <div class="stat-label">Level 1 — In-Scope</div>
+      <div class="stat-label">Level 1 — Controls</div>
       <div class="stat-value">${s1.total}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Level 1 — Implemented</div>
-      <div class="stat-value">${s1.implemented}</div>
+      <div class="stat-value">${s1.impl}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Level 1 — Completion %</div>
@@ -322,12 +351,12 @@ function renderLevelStats(records) {
     </div>
 
     <div class="stat-card">
-      <div class="stat-label">Level 2 — In-Scope</div>
+      <div class="stat-label">Level 2 — Controls</div>
       <div class="stat-value">${s2.total}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Level 2 — Implemented</div>
-      <div class="stat-value">${s2.implemented}</div>
+      <div class="stat-value">${s2.impl}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Level 2 — Completion %</div>
@@ -336,30 +365,23 @@ function renderLevelStats(records) {
   `;
 }
 
-/* ---------- Charts (Chart.js) ---------- */
-
-let completionChart, levelChart, radarChart;
+/* --------- Charts --------- */
 
 function initCharts() {
   const donutCtx = document.getElementById("completionDonut").getContext("2d");
-  const levelCtx = document.getElementById("levelBar").getContext("2d");
+  const barCtx   = document.getElementById("levelBar").getContext("2d");
   const radarCtx = document.getElementById("domainRadar").getContext("2d");
 
   completionChart = new Chart(donutCtx, {
     type: "doughnut",
     data: {
-      labels: ["Implemented", "Not Implemented", "N/A"],
-      datasets: [{
-        data: [0, 0, 0]
-      }]
+      labels: ["Implemented", "Not Implemented", "N/A", "Not Assessed"],
+      datasets: [{ data: [0,0,0,0] }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+    options: { responsive: true, maintainAspectRatio: false }
   });
 
-  levelChart = new Chart(levelCtx, {
+  levelChart = new Chart(barCtx, {
     type: "bar",
     data: {
       labels: ["Level 1", "Level 2"],
@@ -371,9 +393,7 @@ function initCharts() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 5 } }
-      }
+      scales: { y: { beginAtZero: true } }
     }
   });
 
@@ -389,79 +409,66 @@ function initCharts() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        r: {
-          min: 0,
-          max: 100,
-          ticks: { stepSize: 20 }
-        }
-      }
+      scales: { r: { min: 0, max: 100, ticks: { stepSize: 20 } } }
     }
   });
 }
 
-function updateCharts(allRecords, viewRecords) {
-  // Completion donut (current view)
-  const stats = computeStats(viewRecords);
+function updateCharts(viewRecords) {
+  const statsView = computeStats(viewRecords);
+
   completionChart.data.datasets[0].data = [
-    stats.implemented,
-    stats.notImpl,
-    stats.na
+    statsView.impl,
+    statsView.notImpl,
+    statsView.na,
+    statsView.none
   ];
   completionChart.update();
 
-  // Level comparison (all records)
   const l1 = allRecords.filter(r => r.level === "L1");
   const l2 = allRecords.filter(r => r.level === "L2");
   const s1 = computeStats(l1);
   const s2 = computeStats(l2);
 
-  levelChart.data.datasets[0].data = [s1.implemented, s2.implemented];
+  levelChart.data.datasets[0].data = [s1.impl, s2.impl];
   levelChart.update();
 
-  // Radar by domain (current view)
-  const domStats = computeDomainMaturity(viewRecords);
-  radarChart.data.labels = domStats.domains;
-  radarChart.data.datasets[0].data = domStats.maturity;
+  const dom = computeDomainMaturity(viewRecords);
+  radarChart.data.labels = dom.domains;
+  radarChart.data.datasets[0].data = dom.values;
   radarChart.update();
 }
 
-/* ---------- Incomplete controls table + CSV ---------- */
+/* --------- Incomplete table + CSV --------- */
 
 function getIncomplete(records) {
-  return records.filter(r => {
-    if (r.inScope === false) return false;
-    return r.status !== "implemented";
-  });
+  return records.filter(r => r.status !== "Implemented");
 }
 
-function renderIncompleteTable(records) {
+function renderIncompleteTable(viewRecords) {
   const tbody = document.querySelector("#incompleteTable tbody");
   tbody.innerHTML = "";
-  const incomplete = getIncomplete(records);
+  const incomplete = getIncomplete(viewRecords);
 
   incomplete.forEach(r => {
-    const tr = document.createElement("tr");
-
     const statusLabel =
-      r.status === "implemented" ? "Implemented" :
-      r.status === "not_implemented" ? "Not Implemented" :
-      r.status === "na" ? "N/A" :
+      r.status === "Implemented" ? "Implemented" :
+      r.status === "Not Implemented" ? "Not Implemented" :
+      r.status === "N/A" ? "N/A" :
       "Not Assessed";
 
     const statusClass =
-      r.status === "implemented" ? "badge-status-impl" :
-      r.status === "not_implemented" ? "badge-status-not" :
-      r.status === "na" ? "badge-status-na" :
+      r.status === "Implemented" ? "badge-status-impl" :
+      r.status === "Not Implemented" ? "badge-status-not" :
+      r.status === "N/A" ? "badge-status-na" :
       "badge-status-none";
 
+    const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>
-        <span class="badge ${r.level === "L1" ? "badge-l1" : "badge-l2"}">${r.level}</span>
-      </td>
-      <td>${r.id || ""}</td>
-      <td>${r.domain || ""}</td>
-      <td>${r.name || ""}</td>
+      <td><span class="badge ${r.level === "L1" ? "badge-l1" : "badge-l2"}">${r.level}</span></td>
+      <td>${r.id}</td>
+      <td>${r.domain}</td>
+      <td>${r.name}</td>
       <td><span class="badge ${statusClass}">${statusLabel}</span></td>
       <td>${r.notes ? r.notes : "<span style='color:#777;'>None</span>"}</td>
     `;
@@ -470,24 +477,23 @@ function renderIncompleteTable(records) {
 }
 
 function downloadIncompleteCSV() {
-  const viewMode = document.getElementById("viewMode").value;
-  const allRecords = flattenRecords();
-  const viewRecords = filterByViewMode(allRecords, viewMode);
+  const mode = document.getElementById("viewMode").value;
+  const viewRecords = filterByViewMode(allRecords, mode);
   const incomplete = getIncomplete(viewRecords);
 
   let csv = "Level,Practice ID,Domain,Practice Name,Status,Notes\n";
   incomplete.forEach(r => {
     const status =
-      r.status === "implemented" ? "Implemented" :
-      r.status === "not_implemented" ? "Not Implemented" :
-      r.status === "na" ? "N/A" :
+      r.status === "Implemented" ? "Implemented" :
+      r.status === "Not Implemented" ? "Not Implemented" :
+      r.status === "N/A" ? "N/A" :
       "Not Assessed";
 
     const row = [
-      r.level || "",
-      r.id || "",
-      r.domain || "",
-      r.name || "",
+      r.level,
+      r.id,
+      r.domain,
+      r.name,
       status,
       (r.notes || "").replace(/"/g, '""')
     ].map(v => `"${v}"`).join(",");
@@ -505,24 +511,32 @@ function downloadIncompleteCSV() {
   URL.revokeObjectURL(url);
 }
 
-/* ---------- Main init ---------- */
+/* --------- Main init + refresh --------- */
 
 function refreshDashboard() {
-  const viewMode = document.getElementById("viewMode").value;
+  const mode = document.getElementById("viewMode").value;
+  const viewRecords = filterByViewMode(allRecords, mode);
 
-  const allRecords = flattenRecords();
-  const viewRecords = filterByViewMode(allRecords, viewMode);
-
-  renderOverallStats(allRecords, viewRecords);
-  renderLevelStats(allRecords);
-  updateCharts(allRecords, viewRecords);
+  renderOverallStats(viewRecords);
+  renderLevelStats();
+  updateCharts(viewRecords);
   renderIncompleteTable(viewRecords);
 }
 
 document.getElementById("viewMode").addEventListener("change", refreshDashboard);
 
-initCharts();
-refreshDashboard();
+Promise.all([fetch(L1_CSV), fetch(L2_CSV)])
+  .then(([r1, r2]) => Promise.all([r1.text(), r2.text()]))
+  .then(([t1, t2]) => {
+    const l1Rows = parseCSV(t1);
+    const l2Rows = parseCSV(t2);
+    buildRecords(l1Rows, l2Rows);
+    initCharts();
+    refreshDashboard();
+  })
+  .catch(err => {
+    console.error("Error loading CSVs for dashboard:", err);
+  });
 </script>
 
 </body>
