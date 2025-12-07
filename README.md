@@ -17,7 +17,7 @@ The platform integrates cybersecurity, compliance, and AI research into one cohe
 | Project | Description | 
 |----------|--------------|
 | **TANO Framework** | The conceptual and methodological foundation that unifies cybersecurity and data science disciplines. 
-| **TANO + CMMC Playbook** | Full implementation guide and mapping of NIST SP 800-171 → CMMC Level 2 with AI-based compliance assistance. 
+| **TANO + CMMC Playbook** | Full implementation guide and mapping of NIST SP 800-171 → CMMC Level 1 and 2 with AI-based compliance assistance. 
 | **TANO-Cyber** | Toolkits, scripts, and lab environments for cybersecurity testing, analysis, and automation. 
 | **TANO-AI** | Applied AI for compliance, threat detection, and cognitive analytics.
 
