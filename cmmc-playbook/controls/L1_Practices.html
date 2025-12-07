@@ -48,9 +48,9 @@
         <tr>
           <th>Practice ID</th>
           <th>Domain</th>
-          <th>NIST Ref</th>
           <th>Practice Name</th>
           <th>Description</th>
+          <th>NIST Ref</th>
         </tr>
       </thead>
       <tbody id="l1Body"></tbody>
@@ -81,11 +81,13 @@ function buildTable(rows) {
   const status = document.getElementById("status");
   const header = rows[0];
 
-  const a = header.indexOf("Practice_ID");
-  const b = header.indexOf("Domain");
-  const c = header.indexOf("NIST_Ref");
-  const d = header.indexOf("Practice_Name");
-  const e = header.indexOf("Practice_Description");
+const idxPracticeId  = header.indexOf("Practice ID");
+const idxDomain      = header.indexOf("Domain");
+const idxName        = header.indexOf("Practice Name");
+const idxDescription = header.indexOf("Description");
+// if you keep a separate NIST ref column later:
+const idxNistRef     = header.indexOf("NIST Ref") >= 0 ? header.indexOf("NIST Ref") : -1;
+
 
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
